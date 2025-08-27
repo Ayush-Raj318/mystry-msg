@@ -1,29 +1,12 @@
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/model/User';
-import { verifySchema } from '@/schemas/verifySchema';
 
 export async function POST(request: Request) {
   // Connect to the database
   await dbConnect();
 
   try {
-    const body = await request.json();
-    
-    // Validate request body with Zod
-    const validationResult = verifySchema.safeParse(body);
-    
-    if (!validationResult.success) {
-      return Response.json(
-        { 
-          success: false, 
-          message: 'Invalid request data',
-          errors: validationResult.error.issues 
-        },
-        { status: 400 }
-      );
-    }
-
-    const { username, code } = validationResult.data;
+    const { username, code } = await request.json();
     const decodedUsername = decodeURIComponent(username);
     const user = await UserModel.findOne({ username: decodedUsername });
 
