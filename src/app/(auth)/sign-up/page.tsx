@@ -95,11 +95,11 @@ export default function SignUpForm() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-800">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="w-full max-w-md p-8 space-y-8 rounded-lg border bg-card text-card-foreground shadow-sm">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-            Join True Feedback
+            Join Mystry Message
           </h1>
           <p className="mb-4">Sign up to start your anonymous adventure</p>
         </div>
@@ -141,7 +141,7 @@ export default function SignUpForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <Input {...field} name="email" />
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-muted-foreground text-sm">
                     We will send you a verification code
                   </p>
                   <FormMessage />
@@ -175,7 +175,7 @@ export default function SignUpForm() {
         <div className="text-center mt-4">
           <p>
             Already a member?{" "}
-            <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">
+            <Link href="/sign-in" className="underline underline-offset-4 hover:no-underline">
               Sign in
             </Link>
           </p>

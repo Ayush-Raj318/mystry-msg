@@ -8,7 +8,6 @@ import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CardHeader, CardContent, Card } from '@/components/ui/card';
-import { useCompletion } from '@ai-sdk/react';
 import {
   Form,
   FormControl,
@@ -38,15 +37,11 @@ export default function SendMessage() {
   const params = useParams<{ username: string }>();
   const username = params.username;
 
-  const {
-    complete,
-    completion,
-    isLoading: isSuggestLoading,
-    error,
-  } = useCompletion({
-    api: '/api/suggest-messages',
-    initialCompletion: initialMessageString,
-  });
+  const [suggestedMessages, setSuggestedMessages] = useState<string[]>(
+    parseStringMessages(initialMessageString)
+  );
+  const [isSuggestLoading, setIsSuggestLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -82,18 +77,47 @@ export default function SendMessage() {
   };
 
   const fetchSuggestedMessages = async () => {
+    setIsSuggestLoading(true);
+    setError(null);
+    
     try {
-      complete('');
+      const response = await fetch('/api/suggest-messages', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('No response body');
+      }
+
+      let result = '';
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        result += decoder.decode(value, { stream: true });
+      }
+
+      const messages = parseStringMessages(result);
+      setSuggestedMessages(messages);
     } catch (error) {
       console.error('Error fetching messages:', error);
-      // Handle error appropriately
+      setError(error instanceof Error ? error.message : 'Failed to fetch messages');
+    } finally {
+      setIsSuggestLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto my-8 p-6 bg-white rounded max-w-4xl">
-      <h1 className="text-4xl font-bold mb-6 text-center">
-        Public Profile Link
+    <div className="container mx-auto my-8 p-6 rounded max-w-4xl">
+      <h1 className="text-4xl font-bold mb-6 text-center tracking-tight">
+        Public Profile
       </h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -136,7 +160,14 @@ export default function SendMessage() {
             className="my-4"
             disabled={isSuggestLoading}
           >
-            Suggest Messages
+            {isSuggestLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              'Suggest Messages'
+            )}
           </Button>
           <p>Click on any message below to select it.</p>
         </div>
@@ -146,9 +177,9 @@ export default function SendMessage() {
           </CardHeader>
           <CardContent className="flex flex-col space-y-4">
             {error ? (
-              <p className="text-red-500">{error.message}</p>
+              <p className="text-red-500">{error}</p>
             ) : (
-              parseStringMessages(completion).map((message, index) => (
+              suggestedMessages.map((message, index) => (
                 <Button
                   key={index}
                   variant="outline"

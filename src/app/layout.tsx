@@ -3,13 +3,14 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import AuthProvider from '../context/AuthProvider';
 import { Toaster } from 'sonner';
+import ThemeProvider from '@/components/ThemeProvider';
 
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'True Feedback',
-  description: 'Real feedback from real people.',
+  title: 'Mystry Message',
+  description: 'Real messages from real people.',
 };
 
 interface RootLayoutProps {
@@ -18,12 +19,14 @@ interface RootLayoutProps {
 
 export default async function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" >
+    <html lang="en" suppressHydrationWarning>
       <AuthProvider>
-        <body className={inter.className}>
-          {children}
-          <Toaster />
-        </body>
+        <ThemeProvider>
+          <body className={inter.className}>
+            {children}
+            <Toaster />
+          </body>
+        </ThemeProvider>
       </AuthProvider>
     </html>
   );

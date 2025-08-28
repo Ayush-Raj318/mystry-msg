@@ -105,7 +105,7 @@ function UserDashboard() {
   };
 
   if (!session || !session.user) {
-    return <div>Please login to continue</div>;
+    return <div className="container mx-auto py-16 text-center text-muted-foreground">Please login to continue</div>;
   }
 
   const { username } = session.user as User;
@@ -121,21 +121,22 @@ function UserDashboard() {
   };
 
   return (
-    <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
-      <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
+    <div className="container mx-auto my-8 px-4">
+      <div className="rounded-lg border bg-card text-card-foreground p-6 shadow-sm">
+        <h1 className="text-3xl font-bold mb-4 tracking-tight">User Dashboard</h1>
 
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{" "}
-        <div className="flex items-center">
-          <input
-            type="text"
-            value={profileUrl}
-            disabled
-            className="input input-bordered w-full p-2 mr-2"
-          />
-          <Button onClick={copyToClipboard}>Copy</Button>
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{" "}
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={profileUrl}
+              disabled
+              className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+            />
+            <Button onClick={copyToClipboard} variant="outline">Copy</Button>
+          </div>
         </div>
-      </div>
 
       <div className="mb-4">
         <Switch
@@ -148,34 +149,35 @@ function UserDashboard() {
           Accept Messages: {acceptMessages ? "On" : "Off"}
         </span>
       </div>
-      <Separator />
+        <Separator />
 
-      <Button
-        className="mt-4"
-        variant="outline"
-        onClick={(e) => {
-          e.preventDefault();
-          fetchMessages(true);
-        }}
-      >
-        {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <RefreshCcw className="h-4 w-4" />
-        )}
-      </Button>
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {messages.length > 0 ? (
-          messages.map((message, index) => (
-            <MessageCard
-              key={message._id?.toString() || index}
-              message={message}
-              onMessageDelete={handleDeleteMessage}
-            />
-          ))
-        ) : (
-          <p>No messages to display.</p>
-        )}
+        <Button
+          className="mt-4"
+          variant="outline"
+          onClick={(e) => {
+            e.preventDefault();
+            fetchMessages(true);
+          }}
+        >
+          {isLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <RefreshCcw className="h-4 w-4" />
+          )}
+        </Button>
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {messages.length > 0 ? (
+            messages.map((message, index) => (
+              <MessageCard
+                key={message._id?.toString() || index}
+                message={message}
+                onMessageDelete={handleDeleteMessage}
+              />
+            ))
+          ) : (
+            <p className="text-muted-foreground">No messages to display.</p>
+          )}
+        </div>
       </div>
     </div>
   );
