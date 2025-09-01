@@ -18,7 +18,7 @@ export async function sendVerificationEmail(
     console.log('📝 Email HTML rendered successfully');
     
     const result = await resend.emails.send({
-      from: 'Acme <onboarding@resend.dev>',
+      from: 'ayush-dev.tech',
       to: email,
       subject: 'Mystery Message Verification Code',
       html: emailHtml,
