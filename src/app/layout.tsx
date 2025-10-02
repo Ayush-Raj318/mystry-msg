@@ -20,14 +20,14 @@ interface RootLayoutProps {
 export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <AuthProvider>
-        <ThemeProvider>
-          <body className={inter.className}>
+      <body className={inter.className}>
+        <AuthProvider>
+          <ThemeProvider>
             {children}
             <Toaster />
-          </body>
-        </ThemeProvider>
-      </AuthProvider>
+          </ThemeProvider>
+        </AuthProvider>
+      </body>
     </html>
   );
 }
